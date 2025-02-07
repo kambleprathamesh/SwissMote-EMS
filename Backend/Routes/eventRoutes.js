@@ -1,8 +1,12 @@
 const express = require("express");
-const { createEvent, updateEvent } = require("../controller/eventController");
+const {
+  createEvent,
+  updateEvent,
+  deleteEvent,
+} = require("../controller/eventController");
 const { authenticateUser } = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware");
-const uploadImage = upload.single("image");
+
 const router = express.Router();
 
 // Route to create an event (only authenticated users can create)
@@ -16,4 +20,6 @@ router.put(
   updateEvent // This will update the event, with or without an image
 );
 
+//delete
+router.delete("/delete/:eventId", authenticateUser, deleteEvent);
 module.exports = router;

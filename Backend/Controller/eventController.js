@@ -1,5 +1,7 @@
 const Event = require("../model/events");
+const User = require("../model/user");
 const { uploadToCloudinary } = require("../config/cloudinary");
+const user = require("../model/user");
 
 const createEvent = async (req, res) => {
   try {
@@ -57,7 +59,12 @@ const createEvent = async (req, res) => {
       hostContact,
     });
 
-    await newEvent.save();
+    const event = await newEvent.save();
+    console.log("event", event);
+    await user.findByIdAndUpdate(
+      { _id: organizer },
+      { $push: { createdEvents: event._id } }
+    );
 
     res.status(201).json({
       success: true,
@@ -146,4 +153,43 @@ const updateEvent = async (req, res) => {
   }
 };
 
-module.exports = { createEvent, updateEvent };
+const deleteEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params; // Get eventId from URL params
+
+    // Check if the event exists
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Ensure only the organizer (creator) can delete the event
+    if (event.organizer.toString() !== req.user.userId) {
+      return res.status(403).json({
+        message: "You are not authorized to delete this event",
+      });
+    }
+
+    // Delete the event from the Event collection
+    await Event.findByIdAndDelete(eventId);
+
+    // Update the user document: Remove event from createdEvents array
+    await User.findByIdAndUpdate(
+      req.user.userId,
+      {
+        $pull: { createdEvents: eventId }, // $pull removes the eventId from createdEvents array
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Event deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { createEvent, updateEvent, deleteEvent };

@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema(
     registeredEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }], // Events the user has registered for
     createdEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }], // Events the user has organized
     contactNumber: { type: String }, // Optional field for user contact
+    
   },
   { timestamps: true }
 );
