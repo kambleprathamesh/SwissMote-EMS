@@ -18,9 +18,11 @@ const createEvent = async (req, res) => {
       duration,
       tags,
       hostContact,
+      category,
+      status,
     } = req.body;
 
-    if ((!title, !!description, !date, !time, !location)) {
+    if ((!title, !description, !date, !time, !location)) {
       return res.status(400).json({
         message: "Please fill Required Fields",
       });
@@ -57,6 +59,8 @@ const createEvent = async (req, res) => {
       duration,
       tags: tagArray,
       hostContact,
+      category,
+      status,
     });
 
     const event = await newEvent.save();
@@ -77,6 +81,7 @@ const createEvent = async (req, res) => {
   }
 };
 
+//update event
 const updateEvent = async (req, res) => {
   try {
     const { eventId } = req.params; // Get eventId from URL params
@@ -153,6 +158,7 @@ const updateEvent = async (req, res) => {
   }
 };
 
+//delete event
 const deleteEvent = async (req, res) => {
   try {
     const { eventId } = req.params; // Get eventId from URL params
@@ -192,4 +198,59 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-module.exports = { createEvent, updateEvent, deleteEvent };
+// Route to get filtered events based on status
+const getFilteredData = async (req, res) => {
+  try {
+    // Get filters from query params
+    const { category, startDate, endDate, status } = req.query;
+
+    console.log("req.query", req.query);
+    // Build the query object dynamically
+    let query = {};
+
+    // Filter by category if provided
+    if (category) {
+      query.category = category;
+    }
+
+    // Filter by date range if provided
+    if (startDate || endDate) {
+      query.date = {};
+      if (startDate) {
+        query.date.$gte = new Date(startDate); // Greater than or equal to start date
+      }
+      if (endDate) {
+        query.date.$lte = new Date(endDate); // Less than or equal to end date
+      }
+    }
+
+    // Get current date and time to validate event dates
+    const currentDateTime = new Date();
+
+    // Filter by status if provided (Upcoming, Past)
+    if (status) {
+      if (status === "upcoming") {
+        // Upcoming events have a future date and time
+        query.date = { $gte: currentDateTime };
+      } else if (status === "past") {
+        // Past events have a date and time in the past
+        query.date = { $lt: currentDateTime }; // Less than current date and time
+      }
+    }
+
+    // Fetch events based on query
+    const events = await Event.find(query);
+    console.log("EVENTS LENGTH", events.length);
+    // Return the list of eventss
+    res.status(200).json({
+      success: true,
+      message: "Events fetched successfully",
+      events,
+    });
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { createEvent, updateEvent, deleteEvent, getFilteredData };

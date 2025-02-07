@@ -16,6 +16,8 @@ const eventSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    category: { type: String }, 
+    status: { type: String, enum: ["upcoming", "past"] },
     attendees: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     capacity: { type: Number }, // Optional
     registrationLink: { type: String }, // External form link

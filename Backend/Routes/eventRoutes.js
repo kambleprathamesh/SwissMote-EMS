@@ -3,6 +3,7 @@ const {
   createEvent,
   updateEvent,
   deleteEvent,
+  getFilteredData,
 } = require("../controller/eventController");
 const { authenticateUser } = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware");
@@ -22,4 +23,8 @@ router.put(
 
 //delete
 router.delete("/delete/:eventId", authenticateUser, deleteEvent);
+
+//getFilter Data
+router.get("/filter", authenticateUser, getFilteredData);
+
 module.exports = router;
