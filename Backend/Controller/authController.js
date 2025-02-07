@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../Model/user");
+const User = require("../model/user");
 
 // Signup Controller
 const signup = async (req, res) => {
@@ -33,34 +33,49 @@ const signup = async (req, res) => {
 // Signin Controller
 const signin = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
-    // If the email is empty or matches guest pattern, treat it as Guest Login
+    // If no password is provided, check for guest login
     if (!password) {
-      // If the user does not provide a password, treat it as a Guest Login
+      if (role !== "guest") {
+        return res.status(400).json({ message: "Invalid role for guest login." });
+      }
+
+      // Check if the email exists in the database
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res
+          .status(400)
+          .json({ message: "Email not registered. Guest login not allowed." });
+      }
+
+      // Generate JWT token for guest users
       const token = jwt.sign(
-        { userId: email, role: "guest" }, // Use email as userId for simplicity
+        { userId: user._id, role: "guest" },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
       return res.status(200).json({ message: "Guest login successful", token });
     }
 
-    // Normal user signin with email and password
+    // Normal user login (Organizer)
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "User does not exist" });
     }
 
     // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "Incorrect password" });
     }
 
-    // Generate JWT for registered user
+    // Default role is "organizer" if no role is specified
+    const userRole = role === "guest" ? "guest" : "organizer";
+
+    // Generate JWT token
     const token = jwt.sign(
-      { userId: user._id, role: "user" },
+      { userId: user._id, role: userRole },
       process.env.JWT_SECRET,
       { expiresIn: "2d" }
     );
@@ -72,5 +87,6 @@ const signin = async (req, res) => {
       .json({ message: "Internal server error", error: error.message });
   }
 };
+
 
 module.exports = { signup, signin };
