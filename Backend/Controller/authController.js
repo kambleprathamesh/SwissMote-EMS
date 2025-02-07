@@ -30,15 +30,21 @@ const signup = async (req, res) => {
   }
 };
 
-// Signin Controller
+// Signin Controller (Supports Guest Login)
 const signin = async (req, res) => {
   try {
     const { email, password, role } = req.body;
 
-    // If no password is provided, check for guest login
+    if (!email) {
+      return res.status(400).json({ message: "Enter Email" });
+    }
+
+    // Handle guest login
     if (!password) {
       if (role !== "guest") {
-        return res.status(400).json({ message: "Invalid role for guest login." });
+        return res
+          .status(400)
+          .json({ message: "Invalid role for guest login." });
       }
 
       // Check if the email exists in the database
@@ -58,7 +64,7 @@ const signin = async (req, res) => {
       return res.status(200).json({ message: "Guest login successful", token });
     }
 
-    // Normal user login (Organizer)
+    // Normal user login
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });
@@ -70,15 +76,10 @@ const signin = async (req, res) => {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
-    // Default role is "organizer" if no role is specified
-    const userRole = role === "guest" ? "guest" : "organizer";
-
     // Generate JWT token
-    const token = jwt.sign(
-      { userId: user._id, role: userRole },
-      process.env.JWT_SECRET,
-      { expiresIn: "2d" }
-    );
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "2d",
+    });
 
     return res.status(200).json({ message: "Login successful", token });
   } catch (error) {
@@ -88,5 +89,6 @@ const signin = async (req, res) => {
   }
 };
 
+module.exports = { signup, signin };
 
 module.exports = { signup, signin };

@@ -14,28 +14,27 @@ const authenticateUser = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
+
+    console.log(req.user);
+
+    // If no role is specified, default to "user"
+    if (!req.user.role) {
+      req.user.role = "user";
+    }
+
     next();
   } catch (error) {
     return res.status(403).json({ message: "Invalid or expired token." });
   }
 };
 
-const authorizeRole = (roles) => {
-  return (req, res, next) => {
-    if (!req.user || !req.user.role) {
-      return res
-        .status(403)
-        .json({ message: "Access Denied. No role assigned." });
-    }
-
-    if (!roles.includes(req.user.role)) {
-      return res
-        .status(403)
-        .json({ message: "Access Denied. Insufficient permissions." });
-    }
-
-    next();
-  };
+const authorizeGuest = (req, res, next) => {
+  if (req.user.role !== "guest") {
+    return res
+      .status(403)
+      .json({ message: "Access Denied. Only guest access allowed." });
+  }
+  next();
 };
 
-module.exports = { authenticateUser, authorizeRole };
+module.exports = { authenticateUser, authorizeGuest };

@@ -14,16 +14,24 @@ const createEvent = async (req, res) => {
       ticketPrice,
       duration,
       tags,
-      isPrivate,
       hostContact,
     } = req.body;
 
     // Ensure organizer is set from authenticated user
-    const organizer = req.user.id;
+    const organizer = req.user.userId;
+
+    // Convert tags to an array if it's not already
+    const tagArray = tags.split(",").map((tag) => tag.trim());
+
+    console.log(tagArray);
 
     let imageUrl = "";
     if (req.file) {
-      imageUrl = await uploadToCloudinary(req.file.path);
+      imageUrl = await uploadToCloudinary(
+        req.file.buffer,
+        req.file.mimetype.split("/")[1]
+      );
+      console.log("imageUrl", imageUrl);
     }
 
     const newEvent = new Event({
@@ -38,8 +46,7 @@ const createEvent = async (req, res) => {
       isPaid,
       ticketPrice,
       duration,
-      tags,
-      isPrivate,
+      tags: tagArray,
       hostContact,
     });
 
@@ -56,4 +63,4 @@ const createEvent = async (req, res) => {
   }
 };
 
-module.exports = {createEvent};
+module.exports = { createEvent };

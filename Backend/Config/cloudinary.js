@@ -7,15 +7,24 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadToCloudinary = async (filePath) => {
+const uploadToCloudinary = async (buffer, fileFormat) => {
   try {
-    const result = await cloudinary.uploader.upload(filePath, {
-      folder: "Swiss", // Cloudinary folder name
-    });
-    return result.secure_url;
+    const result = cloudinary.uploader
+      .upload_stream(
+        { folder: "Swiss", resource_type: "image", format: fileFormat },
+        (error, result) => {
+          if (error) {
+            console.error("Cloudinary upload error:", error);
+            throw new Error("Image upload failed");
+          }
+          return result.secure_url;
+        }
+      )
+      .end(buffer);
+
+    return result;
   } catch (error) {
-    console.error("Cloudinary upload error:", error);
-    throw new Error("Image upload failed");
+    throw new Error(error.message);
   }
 };
 

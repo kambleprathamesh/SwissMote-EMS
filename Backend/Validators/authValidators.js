@@ -19,6 +19,10 @@ const signinSchema = z.object({
 // Middleware for validation
 const validateSignup = (req, res, next) => {
   try {
+    const { name, email, password, role } = req.body;
+    if ((!name, !email, !password)) {
+      return res.status(400).json({ message: " Please fill all the Details" });
+    }
     signupSchema.parse(req.body);
     next();
   } catch (error) {

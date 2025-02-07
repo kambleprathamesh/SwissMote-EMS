@@ -15,7 +15,7 @@ app.use(cors()); // Enable CORS
 
 //AUTH ROUTES
 app.use("/api/auth", authRoutes); // Register the routes
-app.use("api/event", eventRoutes);
+app.use("/api/event", eventRoutes);
 
 // Connect to Database
 connectDB();
