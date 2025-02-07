@@ -121,12 +121,14 @@ const updateEvent = async (req, res) => {
         : tags.split(",").map((tag) => tag.trim());
     }
     if (hostContact) updateData.hostContact = hostContact;
-
+    console.log("req.file in update controller", req.file);
     // Handle image update (if a new image is uploaded)
     if (req.file) {
       const imageUrl = await uploadToCloudinary(req.file.buffer);
       updateData.image = imageUrl; // Update image URL
     }
+
+    console.log("updateData", updateData);
 
     // Update event in the database
     const updatedEvent = await Event.findByIdAndUpdate(eventId, updateData, {

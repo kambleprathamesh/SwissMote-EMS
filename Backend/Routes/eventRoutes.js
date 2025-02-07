@@ -12,15 +12,8 @@ router.post("/create", authenticateUser, upload.single("image"), createEvent);
 router.put(
   "/update/:eventId",
   authenticateUser,
-  (req, res, next) => {
-    // If there is a file, run the upload middleware
-    if (req.file) {
-      return uploadImage(req, res, next);
-    }
-    // Otherwise, skip the file upload and continue to the controller
-    next();
-  },
-  updateEvent
+  upload.single("image"), // This will handle file upload if it exists
+  updateEvent // This will update the event, with or without an image
 );
 
 module.exports = router;
