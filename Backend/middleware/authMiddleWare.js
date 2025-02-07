@@ -21,7 +21,7 @@ const authenticateUser = (req, res, next) => {
     if (!req.user.role) {
       req.user.role = "user";
     }
-
+    console.log("TOKEN VERIFIED");
     next();
   } catch (error) {
     return res.status(403).json({ message: "Invalid or expired token." });
