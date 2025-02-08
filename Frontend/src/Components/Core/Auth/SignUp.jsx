@@ -1,23 +1,20 @@
-// import ToggleButton from "../../Common/ToggleButton";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function SignUp() {
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
 
-  const { firstName, lastName, email, password, confirmPassword } = formData;
+  const { name, email, password } = formData;
 
   const changeHandler = (e) => {
     setFormData((prevData) => ({
@@ -25,43 +22,67 @@ function SignUp() {
       [e.target.name]: e.target.value,
     }));
   };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
+    const toastId = toast.loading("Signing up...");
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    try {
+      const response = await axios.post(`${backendUrl}/auth/signup`, formData);
+
+      console.log("SIGNUP RESPONSE", response.data.message);
+
+      if (response.status === 201) {
+        toast.success(response.data.message || "Signup successful!");
+        navigate("/signin");
+
+        // Reset form data only on successful signup
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+        });
+      }
+    } catch (error) {
+      console.error("SIGNUP ERROR:", error);
+
+      if (error.response) {
+        // Server responded with a status code outside 2xx range
+        const status = error.response.status;
+        if (status === 400) {
+          toast.error(
+            error.response.data.message || "Please fill all fields correctly!"
+          );
+        } else if (status === 409) {
+          toast.error(error.response.data.message || "User already exists!");
+        } else {
+          toast.error(error.response.data.message || "Something went wrong!");
+        }
+      } else if (error.request) {
+        // No response received from server
+        toast.error("Server not responding! Please try again.");
+      } else {
+        // Other errors
+        toast.error("An unexpected error occurred!");
+      }
+    } finally {
+      toast.dismiss(toastId);
     }
-
-    const signupData = {
-      ...formData,
-      accountType,
-    };
-
-    // Reset form data
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
   };
 
   return (
     <div className="w-full mt-6 max-w-maxContent bg-[#000814] text-[#F1F2FF]">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col">
-          <label htmlFor="firstName" className="w-[75%] flex flex-col gap-1">
+          <label htmlFor="name" className="md:w-[75%] flex flex-col gap-1">
             <p className="text-[14px] leading-[22px] text-[#F1F2FF] font-normal">
               First Name <span className="text-pink-300">*</span>
             </p>
             <input
               type="text"
               placeholder="Enter First Name"
-              name="firstName"
-              value={firstName}
+              name="name"
+              value={name}
               required
               onChange={changeHandler}
               className="w-full pl-3 h-12 rounded-md bg-[#161D29] placeholder:pl-2 border-b-[1px] border-[#F1F2FF]"
@@ -69,7 +90,7 @@ function SignUp() {
           </label>
         </div>
 
-        <label htmlFor="email" className="w-[75%] flex flex-col gap-1">
+        <label htmlFor="email" className="md:w-[75%] flex flex-col gap-1">
           <p className="text-[14px] leading-[22px] text-[#F1F2FF] font-normal">
             Email Address <span className="text-pink-300">*</span>
           </p>
@@ -85,7 +106,10 @@ function SignUp() {
         </label>
 
         <div className="relative">
-          <label htmlFor="password" className="w-[75%] flex flex-col relative">
+          <label
+            htmlFor="password"
+            className="md:w-[75%] flex flex-col relative"
+          >
             <p className="text-[14px] leading-[22px] text-[#F1F2FF] font-normal mb-1">
               Create Password <span className="text-pink-300">*</span>
             </p>
@@ -113,7 +137,7 @@ function SignUp() {
 
         <button
           type="submit"
-          className="w-[73%] mt-6 rounded-[8px] bg-yellow-300 py-[8px] px-[12px] font-medium text-[#000814]"
+          className="md:w-[73%] mt-6 rounded-[8px] bg-yellow-300 py-[8px] px-[12px] font-medium text-[#000814]"
         >
           Create Account
         </button>
@@ -123,18 +147,3 @@ function SignUp() {
 }
 
 export default SignUp;
-
-// richblack: {
-//   5: "#F1F2FF",
-//   25: "#DBDDEA",
-//   50: "#C5C7D4",
-//   100: "#AFB2BF",
-//   200: "#999DAA",
-//   300: "#838894",
-//   400: "#6E727F",
-//   500: "#585D69",
-//   600: "#424854",
-//   700: "#2C333F",
-//   800: "#161D29",
-//   900: "#000814",
-// },

@@ -22,7 +22,7 @@ const Signin = () => {
   console.log(accountType);
 
   return (
-    <div class="w-[85%] mx-auto min-h-[80vh] grid-cols-1 flex flex-col-reverse  md:grid md:grid-cols-2 place-items-center  ">
+    <div className="w-[85%] mx-auto min-h-[80vh] grid-cols-1 flex flex-col-reverse  md:grid md:grid-cols-2 place-items-center  ">
       <div>
         <div className="mx-auto w-11/12 max-w-[450px] md:mx-0">
           <h1 className="text-[1.875rem] font-semibold leading-[2.375rem] text-[#F1F2FF]">

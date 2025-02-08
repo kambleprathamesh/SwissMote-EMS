@@ -7,13 +7,13 @@ const signupSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-// Signin Schema
 const signinSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters")
-    .optional(),
+    .optional()
+    .or(z.literal("")),
 });
 
 // Middleware for validation

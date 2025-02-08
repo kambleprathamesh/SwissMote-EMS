@@ -1,26 +1,12 @@
-import { useState, useEffect } from "react";
-import { Link, matchPath } from "react-router-dom";
-
-import { useLocation } from "react-router-dom";
-
-import ProfileDropDown from "../Components/Core/Auth/ProfileDropDown";
-
+import { Link, useLocation } from "react-router-dom";
 import { AiOutlineMenu } from "react-icons/ai";
+import ProfileDropDown from "../Components/Core/Auth/ProfileDropDown";
+import { useAuth } from "../Pages/AuthContext";
 
-import { AiOutlineShoppingCart } from "react-icons/ai";
 function Navbar() {
   const location = useLocation();
-
-  const [subLinks, setSubLinks] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const token = localStorage.getItem("token");
-  useEffect(() => {}, []);
-
-  function matchRoute(route) {
-    return matchPath({ path: route }, location.pathname);
-  }
-
+  const { auth } = useAuth();
+  const token = auth?.token;
   return (
     <div
       className={`flex h-14 items-center justify-center border-b-[1px] border-b-[#2C333F] ${
@@ -35,22 +21,25 @@ function Navbar() {
 
         {/* Login / Signup / Dashboard */}
         <div className="hidden md:flex items-center gap-x-4">
-          {token === null && (
-            <Link to="/login">
-              <button className="rounded-md border border-[#2C333F] bg-[#161D29] px-3 py-2 text-[#AFB2BF] cursor-pointer">
-                Log In
-              </button>
-            </Link>
+          {!token ? (
+            <>
+              <Link to="/signin">
+                <button className="rounded-md border border-[#2C333F] bg-[#161D29] px-3 py-2 text-[#AFB2BF] cursor-pointer">
+                  Log In
+                </button>
+              </Link>
+              <Link to="/signup">
+                <button className="rounded-md border border-[#2C333F] bg-[#161D29] px-3 py-2 text-[#AFB2BF] cursor-pointer">
+                  Sign Up
+                </button>
+              </Link>
+            </>
+          ) : (
+            <ProfileDropDown />
           )}
-          {token === null && (
-            <Link to="/signup">
-              <button className="rounded-md border border-[#2C333F] bg-[#161D29] px-3 py-2 text-[#AFB2BF] cursor-pointer">
-                Sign Up
-              </button>
-            </Link>
-          )}
-          {token !== null && <ProfileDropDown />}
         </div>
+
+        {/* Mobile Menu Icon */}
         <button className="md:hidden">
           <AiOutlineMenu fontSize={24} fill="#AFB2BF" />
         </button>
