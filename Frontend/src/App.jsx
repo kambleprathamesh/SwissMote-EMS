@@ -7,8 +7,10 @@ import SignUp from "./Pages/Signup";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "./Pages/AuthContext";
 import Feeds from "./Pages/Feeds";
+import Dashboard from "./Pages/Dashboard";
 import Error from "./Pages/Error";
 import AddEvents from "./Pages/AddEvents";
+import EventDetails from "./Components/EventCard/EventDetail";
 // import Dashboard from "./Pages/Dashboard";
 
 // Protected Route Component
@@ -32,11 +34,13 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Feeds />
+                <Dashboard />
               </ProtectedRoute>
             }
           >
             <Route path="/dashboard/add-event" element={<AddEvents />} />
+            <Route path="/dashboard/feed" element={<Feeds />} />
+            <Route path="/dashboard/event/:id" element={<EventDetails />} />
           </Route>
           <Route path="*" element={<Error />} />
         </Routes>

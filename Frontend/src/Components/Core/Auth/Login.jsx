@@ -14,7 +14,7 @@ function Login({ accountType }) {
   // Redirect if already logged in
   useEffect(() => {
     if (auth?.token) {
-      navigate("/dashboard");
+      navigate("/dashboard/feed");
     }
   }, [auth, navigate]);
 
@@ -37,7 +37,7 @@ function Login({ accountType }) {
         toast.success(response.data.message || "Login successful!");
         localStorage.setItem("user", JSON.stringify(response.data));
         setAuth(response.data);
-        navigate("/dashboard");
+        navigate("/dashboard/feed");
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed!");
