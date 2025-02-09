@@ -200,28 +200,103 @@ const deleteEvent = async (req, res) => {
 };
 
 // Route to get filtered events based on status
+// const getFilteredData = async (req, res) => {
+//   try {
+//     // Get filters from query params
+//     const { category, startDate, endDate, status, eventId } = req.query;
+
+//     console.log("req.query", req.query);
+//     // Build the query object dynamically
+//     let query = {};
+
+//     if (eventId) {
+//       query._id = eventId;
+//     }
+
+//     // Filter by category if provided
+//     if (category) {
+//       query.category = category;
+//     }
+
+//     // Filter by date range if provided
+//     if (startDate || endDate) {
+//       query.date = {};
+//       if (startDate) {
+//         query.date.$gte = new Date(startDate); // Greater than or equal to start date
+//       }
+//       if (endDate) {
+//         query.date.$lte = new Date(endDate); // Less than or equal to end date
+//       }
+//     }
+
+//     // Get current date and time to validate event dates
+//     const currentDateTime = new Date();
+
+//     // Filter by status if provided (Upcoming, Past)
+//     if (status) {
+//       if (status === "upcoming") {
+//         // Upcoming events have a future date and time
+//         query.date = { $gte: currentDateTime };
+//       } else if (status === "past") {
+//         // Past events have a date and time in the past
+//         query.date = { $lt: currentDateTime }; // Less than current date and time
+//       }
+//     }
+
+//     // Fetch events based on query
+//     const events = await Event.find(query);
+//     console.log("EVENTS LENGTH", events.length);
+//     // Return the list of eventss
+//     res.status(200).json({
+//       success: true,
+//       message: "Events fetched successfully",
+//       events,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching events:", error);
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
 const getFilteredData = async (req, res) => {
   try {
     // Get filters from query params
-    const { category, startDate, endDate, status } = req.query;
+    const { category, startDate, endDate, status, eventId } = req.query;
 
     console.log("req.query", req.query);
+
     // Build the query object dynamically
     let query = {};
+
+    if (eventId) {
+      query._id = eventId;
+    }
 
     // Filter by category if provided
     if (category) {
       query.category = category;
     }
 
-    // Filter by date range if provided
-    if (startDate || endDate) {
+    // Validate and filter by date range if both startDate and endDate are provided
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      if (end < start) {
+        return res.status(400).json({
+          success: false,
+          message: "End date cannot be earlier than start date",
+        });
+      }
+
+      query.date = { $gte: start, $lte: end };
+    } else if (startDate || endDate) {
       query.date = {};
       if (startDate) {
-        query.date.$gte = new Date(startDate); // Greater than or equal to start date
+        query.date.$gte = new Date(startDate);
       }
       if (endDate) {
-        query.date.$lte = new Date(endDate); // Less than or equal to end date
+        query.date.$lte = new Date(endDate);
       }
     }
 
@@ -231,18 +306,17 @@ const getFilteredData = async (req, res) => {
     // Filter by status if provided (Upcoming, Past)
     if (status) {
       if (status === "upcoming") {
-        // Upcoming events have a future date and time
         query.date = { $gte: currentDateTime };
       } else if (status === "past") {
-        // Past events have a date and time in the past
-        query.date = { $lt: currentDateTime }; // Less than current date and time
+        query.date = { $lt: currentDateTime };
       }
     }
 
     // Fetch events based on query
     const events = await Event.find(query);
     console.log("EVENTS LENGTH", events.length);
-    // Return the list of eventss
+
+    // Return the list of events
     res.status(200).json({
       success: true,
       message: "Events fetched successfully",

@@ -16,7 +16,7 @@ const app = express();
 const server = http.createServer(app); // Create HTTP server for WebSockets
 
 const corsOptions = {
-  origin: "http://localhost:5173", // Update this to your frontend URL
+  origin: "http://localhost:5174", // Update this to your frontend URL
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
