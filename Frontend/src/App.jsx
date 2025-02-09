@@ -7,10 +7,14 @@ import SignUp from "./Pages/Signup";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "./Pages/AuthContext";
 import Feeds from "./Pages/Feeds";
+import Error from "./Pages/Error";
+import AddEvents from "./Pages/AddEvents";
+// import Dashboard from "./Pages/Dashboard";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { auth } = useAuth();
+  console.log(auth);
   return auth?.token ? children : <Navigate to="/signin" />;
 };
 
@@ -23,15 +27,18 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<SignUp />} />
+
           <Route
-            path="/feed"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Feeds />
               </ProtectedRoute>
             }
-          />
-          <Route path="*" element={<Navigate to="/" />} />
+          >
+            <Route path="/dashboard/add-event" element={<AddEvents />} />
+          </Route>
+          <Route path="*" element={<Error />} />
         </Routes>
       </AuthProvider>
       <Toaster />

@@ -4,6 +4,7 @@ const { uploadToCloudinary } = require("../config/cloudinary");
 const user = require("../model/user");
 
 const createEvent = async (req, res) => {
+  console.log("CREATE EVENT IS BEING CALLED");
   try {
     const {
       title,
@@ -22,7 +23,7 @@ const createEvent = async (req, res) => {
       status,
     } = req.body;
 
-    if ((!title, !description, !date, !time, !location)) {
+    if (!title || !description || !date || !time || !location) {
       return res.status(400).json({
         message: "Please fill Required Fields",
       });
