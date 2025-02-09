@@ -42,7 +42,7 @@ export default function ProfileDropdown() {
         />
         <AiOutlineCaretDown className="text-sm text-richblack-100" />
       </div>
-      {/* {open && (
+      {open && (
         <div
           onClick={(e) => e.stopPropagation()}
           className="absolute top-[150%] right-0 z-[1000] divide-y-[1px] divide-richblack-700 overflow-hidden rounded-md border-[1px] border-richblack-700 bg-richblack-800"
@@ -62,7 +62,7 @@ export default function ProfileDropdown() {
             Logout
           </div>
         </div>
-      )} */}
+      )}
     </button>
   );
 }

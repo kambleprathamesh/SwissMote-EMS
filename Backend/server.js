@@ -6,6 +6,8 @@ const http = require("http"); // Required for WebSockets
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const eventRoutes = require("./routes/eventRoutes");
+const userRoute = require("./routes/userRoute");
+
 const initializeWebSockets = require("./config/socket"); // Import WebSocket setup
 
 // Load environment variables
@@ -36,6 +38,7 @@ connectDB().catch((err) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/event", eventRoutes);
+app.use("/api/user", userRoute);
 
 app.get("/", (req, res) => {
   res.send("Event Management API is running...");
