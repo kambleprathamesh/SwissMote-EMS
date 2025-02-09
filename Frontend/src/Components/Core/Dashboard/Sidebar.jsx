@@ -1,16 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { VscSignOut } from "react-icons/vsc";
 import { sidebarLinks } from "../../../data/dashboard-links";
-
 import SidebarLink from "./SidebarLink";
-
 import CommonModal from "../../ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const [confirmationModal, setConfirmationModal] = useState(null);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate(); // Moved navigate above handleLogout
 
-  const navigate = useNavigate();
+  const handleLogout = () => {
+    console.log("Clicked logout button");
+    localStorage.removeItem("user"); // Remove user data
+    navigate("/signin"); // Redirect to signin page
+    setOpen(false);
+    window.location.reload();
+  };
 
   return (
     <>
@@ -34,11 +40,10 @@ const Sidebar = () => {
               onClick={() =>
                 setConfirmationModal({
                   text1: "Are You Sure?",
-                  text2: "You will be Logged out?",
-                  btn1Text: "Logout",
-                  btn2Text: "Cancel",
-                  btn1Handler: () => dispatch(logout(navigate)),
-                  btn2Handler: () => setConfirmationModal(null),
+                  text2: "You will be logged out?",
+                  btn1Text: "Cancel",
+                  btn2Text: "Logout",
+                  btn2Handler: handleLogout, // Pass logout function
                 })
               }
               className="text-sm font-medium text-[#838894] ml-4 mt-10"

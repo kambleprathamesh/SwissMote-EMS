@@ -1,9 +1,12 @@
 const User = require("../model/user");
 
-export const getProfile = async (req, res) => {
+const getProfile = async (req, res) => {
+  console.log("controller reaching here");
   try {
     // Extract user ID from middleware
-    const userId = req.user.id;
+    const userId = req.user.userId;
+
+    console.log("userID in getProfile", userId);
 
     if (!userId) {
       return res
@@ -26,3 +29,5 @@ export const getProfile = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error." });
   }
 };
+
+module.exports = { getProfile };

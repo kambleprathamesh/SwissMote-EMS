@@ -59,7 +59,7 @@ const signin = async (req, res) => {
       }
 
       // Check if the email exists in the database
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).select("-password");
       if (!user) {
         return res
           .status(404)
@@ -73,7 +73,9 @@ const signin = async (req, res) => {
         { expiresIn: "1d" }
       );
 
-      return res.status(200).json({ message: "Guest login successful", token });
+      return res
+        .status(200)
+        .json({ message: "Guest login successful", user, token });
     }
 
     // Normal user login
@@ -82,6 +84,7 @@ const signin = async (req, res) => {
       return res.status(404).json({ message: "User does not exist" });
     }
 
+    const userid = user._id;
     // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -97,7 +100,7 @@ const signin = async (req, res) => {
       }
     );
 
-    return res.status(200).json({ message: "Login successful", token });
+    return res.status(200).json({ message: "Login successful", token, userid });
   } catch (error) {
     return res
       .status(500)

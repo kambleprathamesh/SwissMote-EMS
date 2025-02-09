@@ -1,6 +1,6 @@
 const express = require("express");
 const { authenticateUser } = require("../middleware/authMiddleware");
-const getProfile = require("../controller/userController");
+const { getProfile } = require("../controller/userController");
 const router = express.Router();
 
 // Routes with Zod validation

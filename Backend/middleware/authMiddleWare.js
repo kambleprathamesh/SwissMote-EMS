@@ -14,7 +14,7 @@ const authenticateUser = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
-
+    console.log("req.user in middlewrae", req.user);
     console.log(req.user);
 
     // If no role is specified, default to "user"
