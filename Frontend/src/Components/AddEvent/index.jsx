@@ -12,23 +12,17 @@ export const AddEvent = () => {
       </div>
       <div className="w-[40%] h-3/4  bg-[#161D29] border-[1px] border-[#2C333F] rounded-md p-4 flex flex-col gap-y-4">
         <h1 className="font-inter text-lg font-semibold">
-          ⚡Course Upload Tips
+          ⚡Event Upload Tips
         </h1>
         <ol className="w-full flex flex-col gap-y-2 font-inter text-sm font-medium list-disc pl-6">
-          <li>Set the Course Price option or make it free.</li>
-          <li>Standard size for the course thumbnail is 1024x576.</li>
-          <li>Video section controls the course overview video.</li>
-          <li>Course Builder is where you create & organize a course.</li>
-          <li>
-            Add Topics in the Course Builder section to create lessons, quizzes,
-            and assignments.
-          </li>
-          <li>
-            Information from the Additional Data section shows up on the course
-            single page.
-          </li>
-          <li>Make Announcements to notify any important</li>
-          <li>Notes to all enrolled students at once.</li>
+          <li>Set the event date and time.</li>
+          <li>Use a 1024x576 image size.</li>
+          <li>Provide a clear event description.</li>
+          <li>Manage organizers in the Event Organizer section.</li>
+          <li>Add sessions to break the event into parts.</li>
+          <li>Additional data shows on the event page.</li>
+          <li>Use announcements for important updates.</li>
+          <li>Send notes to all participants.</li>
         </ol>
       </div>
     </div>

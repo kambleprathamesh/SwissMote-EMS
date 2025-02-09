@@ -254,4 +254,34 @@ const getFilteredData = async (req, res) => {
   }
 };
 
-module.exports = { createEvent, updateEvent, deleteEvent, getFilteredData };
+// Controller to get events by userId
+const getEventsByUserId = async (req, res) => {
+  try {
+    // Assuming user ID is available after authentication middleware
+    const userId = req.user.id;
+
+    // Fetch events for the authenticated user
+    const events = await Event.find({ userId }).sort({ date: 1 }); // Sort events by date, change as necessary
+
+    if (!events || events.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No events found for this user." });
+    }
+
+    return res.status(200).json({ events });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Server error, please try again later." });
+  }
+};
+
+module.exports = {
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  getFilteredData,
+  getEventsByUserId,
+};

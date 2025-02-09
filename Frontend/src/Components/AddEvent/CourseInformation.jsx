@@ -184,7 +184,7 @@ const CourseInformation = () => {
       </div>
       <button
         type="submit"
-        className="flex items-center gap-2 p-3 bg-blue-600 text-white rounded-md"
+        className="flex items-center gap-2 p-3 bg-yellow-500 text-yellow-900 font-semibold rounded-md"
       >
         Create Event <MdNavigateNext />
       </button>

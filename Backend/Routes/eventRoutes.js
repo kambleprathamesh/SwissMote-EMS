@@ -4,6 +4,7 @@ const {
   updateEvent,
   deleteEvent,
   getFilteredData,
+  getEventsByUserId,
 } = require("../controller/eventController");
 const { authenticateUser } = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware");
@@ -26,5 +27,8 @@ router.delete("/delete/:eventId", authenticateUser, deleteEvent);
 
 //getFilter Data
 router.get("/filter", authenticateUser, getFilteredData);
+
+//get events by userid
+router.get("/events", authenticateUser, getEventsByUserId);
 
 module.exports = router;
